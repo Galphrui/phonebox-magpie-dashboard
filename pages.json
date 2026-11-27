@@ -1,0 +1,19 @@
+{
+  "idleReturnSec": 0,
+  "pages": {
+    "ai": {
+      "title": "magpie",
+      "icon": "🪄",
+      "idleSec": 0,
+      "widget": "widgets/ai-dashboard.html",
+      "widgetId": "magpie-live"
+    },
+    "work": {
+      "title": "路由",
+      "icon": "⇄",
+      "idleSec": 0,
+      "widget": "widgets/route-dashboard.html",
+      "widgetId": "magpie-routing"
+    }
+  }
+}

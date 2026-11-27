@@ -1,0 +1,212 @@
+<style>
+  :root{--acc:#2dd4bf;--dim:#8b95a5;--line:rgba(255,255,255,.07);--card:rgba(255,255,255,.045);--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  *{box-sizing:border-box}
+  html,body{height:100%;background:transparent}
+  body{margin:0;padding:1.5vh 1.6vh;display:grid;grid-template-rows:auto auto minmax(0,1.15fr) minmax(0,.85fr);
+       gap:1.1vh;font-family:Roboto,"PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+       color:#eef2f6;overflow:hidden;font-variant-numeric:tabular-nums}
+  .hdr{display:flex;align-items:center;gap:1.2vh;min-height:0}
+  .brand{display:flex;align-items:center;gap:.9vh;font-size:3.1vh;font-weight:700;letter-spacing:-.02em}
+  .logo{width:3.4vh;height:3.4vh;border-radius:1vh;background:linear-gradient(140deg,#2dd4bf,#0ea5e9);
+        display:grid;place-items:center;font-size:1.9vh;color:#04181a;font-weight:900}
+  .live{display:flex;align-items:center;gap:.6vh;font-size:1.6vh;color:var(--dim)}
+  .dot{width:1.1vh;height:1.1vh;border-radius:50%;background:var(--ok);box-shadow:0 0 1.2vh var(--ok)}
+  .dot.off{background:var(--bad);box-shadow:0 0 1.2vh var(--bad)}
+  .grow{flex:1}
+  .hstat{display:flex;gap:2.4vh;font-size:1.55vh;color:var(--dim);text-align:right}
+  .hstat b{display:block;font-size:2.5vh;color:#eef2f6;font-weight:650;margin-top:.25vh}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1vh}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:1.4vh;padding:1.15vh 1.4vh;min-width:0}
+  .kpi .k{font-size:1.45vh;color:var(--dim);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kpi .v{font-size:3.5vh;font-weight:700;margin-top:.45vh;line-height:1.05;white-space:nowrap}
+  .kpi .v small{font-size:1.6vh;font-weight:500;color:var(--dim);margin-left:.5vh}
+  .kpi .s{font-size:1.35vh;color:var(--dim);margin-top:.35vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mid{display:grid;grid-template-columns:1.6fr 1fr;gap:1.1vh;min-height:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:1.4vh;padding:1.15vh 1.4vh;min-height:0;
+        display:flex;flex-direction:column}
+  .card h4{margin:0 0 .8vh;font-size:1.5vh;font-weight:600;color:var(--dim);letter-spacing:.05em;
+           display:flex;justify-content:space-between;align-items:baseline}
+  .card h4 span{font-weight:400;letter-spacing:0}
+  .chart{flex:1;display:flex;align-items:flex-end;gap:.5vh;min-height:0}
+  .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:.18vh;height:100%;min-height:0}
+  .seg{border-radius:.3vh;min-height:0}
+  .seg.codex{background:var(--acc)}
+  .seg.dsh{background:#a78bfa}
+  .seg.magpie{background:#f59e0b}
+  .seg.other{background:#64748b}
+  .xax{display:flex;gap:.5vh;margin-top:.5vh}
+  .xax span{flex:1;text-align:center;font-size:1.2vh;color:var(--dim)}
+  .rows{display:flex;flex-direction:column;gap:.55vh;overflow:hidden;min-height:0}
+  .row{display:flex;align-items:center;gap:1vh;font-size:1.6vh;min-height:0}
+  .row .nm{color:var(--dim);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row b{font-weight:650}
+  .row .bar{flex:0 0 7vh;height:.7vh;border-radius:1vh;background:rgba(255,255,255,.1);overflow:hidden}
+  .row .bar i{display:block;height:100%;background:var(--acc);border-radius:1vh}
+  .req{display:grid;grid-template-columns:1fr 1fr;gap:.4vh 1.6vh;align-content:start;overflow:hidden;min-height:0}
+  .rq{display:flex;align-items:center;gap:.9vh;font-size:1.45vh;padding:.35vh 0;border-bottom:1px solid rgba(255,255,255,.045);min-width:0}
+  .rq .t{color:var(--dim);width:4.6vh;flex:0 0 auto}
+  .chip{font-size:1.15vh;padding:.15vh .7vh;border-radius:1vh;background:rgba(45,212,191,.16);color:#7ee7dc;
+        text-transform:uppercase;letter-spacing:.04em;flex:0 0 auto}
+  .chip.dsh{background:rgba(167,139,250,.16);color:#c4b5fd}
+  .chip.magpie{background:rgba(245,158,11,.16);color:#fcd34d}
+  .chip.other{background:rgba(148,163,184,.16);color:#cbd5e1}
+  .rq .m{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#cfd8e3}
+  .rq .n{color:var(--dim);flex:0 0 auto}
+  .rq .st{width:.9vh;height:.9vh;border-radius:50%;background:var(--ok);flex:0 0 auto}
+  .rq .st.err{background:var(--bad)}
+  .empty{color:var(--dim);font-size:1.7vh;margin:auto}
+  .off{position:absolute;inset:0;display:none;place-items:center;background:rgba(8,10,14,.82);font-size:2.4vh;color:var(--dim);text-align:center;padding:4vh}
+  body.down .off{display:grid}
+</style>
+
+<div class="hdr">
+  <div class="brand"><span class="logo">M</span>magpie</div>
+  <div class="live"><span class="dot" id="dot"></span><span id="state">连接中…</span></div>
+  <div class="grow"></div>
+  <div class="hstat">
+    <div>今日调用<b id="h1">–</b></div>
+    <div>7 日花费<b id="h2">–</b></div>
+    <div>错误<b id="h3">–</b></div>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="k">TOKENS · 今日</div><div class="v" id="k1">–</div><div class="s" id="k1s">–</div></div>
+  <div class="kpi"><div class="k">缓存命中</div><div class="v" id="k2">–</div><div class="s" id="k2s">–</div></div>
+  <div class="kpi"><div class="k">首字延迟</div><div class="v" id="k3">–</div><div class="s" id="k3s">–</div></div>
+  <div class="kpi"><div class="k">生成速度</div><div class="v" id="k4">–</div><div class="s" id="k4s">–</div></div>
+</div>
+
+<div class="mid">
+  <div class="card">
+    <h4>每小时调用 <span id="chSum"></span></h4>
+    <div class="chart" id="chart"></div>
+    <div class="xax" id="xax"></div>
+  </div>
+  <div class="card">
+    <h4>余额 <span id="qAt"></span></h4>
+    <div class="rows" id="quotas"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h4>最近请求 <span id="rAt"></span></h4>
+  <div class="req" id="recent"></div>
+</div>
+
+<div class="off" id="off"></div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => {
+    if (n == null || isNaN(n)) return '–';
+    n = +n;
+    if (n >= 1e9) return (n / 1e9).toFixed(n >= 1e10 ? 0 : 1) + 'B';
+    if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1) + 'k';
+    return String(Math.round(n));
+  };
+  const money = (n) => (n == null ? '–' : (n === 0 ? '$0' : '$' + (+n).toFixed(2)));
+  const secs = (ms) => (ms == null ? '–' : (ms >= 1000 ? (ms / 1000).toFixed(1) + 's' : Math.round(ms) + 'ms'));
+  const AGENTS = { codex: 'Codex', dsh: 'DeepSeek', claude: 'Claude', 'claude-desktop': 'Claude', magpie: 'magpie' };
+  const cls = (a) => (a === 'codex' ? '' : (a === 'dsh' ? 'dsh' : (a === 'magpie' ? 'magpie' : 'other')));
+  let last = null, ticker = 0;
+
+  function render(d) {
+    last = d;
+    const down = !d || d.ok === false;
+    document.body.classList.toggle('down', down);
+    $('dot').className = 'dot' + (down ? ' off' : '');
+    $('state').textContent = down ? (d && d.err ? d.err : 'magpie 未连接') : 'gateway 127.0.0.1:3425';
+    if (down) { $('off').textContent = 'magpie 未连接 · ' + ((d && d.err) || '等待下一次推送'); return; }
+    const t = d.today || {}, w = d.week || {}, tr = d.traffic || {};
+    $('h1').textContent = fmt(t.calls);
+    $('h2').textContent = money(w.cost);
+    $('h3').textContent = fmt(t.errors);
+    $('k1').innerHTML = fmt((t.in || 0) + (t.out || 0));
+    $('k1s').textContent = '入 ' + fmt(t.in) + ' · 出 ' + fmt(t.out);
+    $('k2').innerHTML = fmt(t.cache);
+    const hit = (t.in || 0) + (t.cache || 0) ? (100 * (t.cache || 0) / ((t.in || 0) + (t.cache || 0))) : 0;
+    $('k2s').textContent = '命中率 ' + hit.toFixed(0) + '%';
+    $('k3').innerHTML = secs(t.ttft);
+    $('k3s').textContent = '平均 · ' + fmt(t.calls) + ' 次请求';
+    $('k4').innerHTML = t.tps == null ? '–' : t.tps.toFixed(1) + ' <small>tok/s</small>';
+    $('k4s').textContent = '↑ ' + fmt(tr.up) + 'B ↓ ' + fmt(tr.down) + 'B';
+
+    // hourly bars
+    const series = d.series || [];
+    const max = Math.max(1, ...series.map((s) => s.calls || 0));
+    const chart = $('chart'); chart.textContent = '';
+    const xax = $('xax'); xax.textContent = '';
+    series.forEach((s, i) => {
+      const col = document.createElement('div'); col.className = 'col';
+      const agents = s.agents || {};
+      const total = s.calls || 0;
+      const parts = Object.keys(agents).filter((k) => agents[k] > 0).sort((a, b) => agents[b] - agents[a]);
+      if (!total) {
+        const z = document.createElement('div'); z.className = 'seg other';
+        z.style.cssText = 'height:2%;opacity:.25';
+        col.append(z);
+      } else {
+        parts.forEach((k) => {
+          const seg = document.createElement('div');
+          seg.className = 'seg ' + cls(k);
+          seg.style.height = (100 * agents[k] / max) + '%';
+          seg.title = AGENTS[k] || k;
+          col.append(seg);
+        });
+      }
+      chart.append(col);
+      if (i % 3 === 0) {
+        const x = document.createElement('span'); x.textContent = s.h; xax.append(x);
+      }
+    });
+    $('chSum').textContent = fmt(t.calls) + ' 次 · 峰值 ' + fmt(max) + '/h';
+
+    // balances
+    const q = $('quotas'); q.textContent = '';
+    const qs = d.quotas || [];
+    if (!qs.length) q.append(Object.assign(document.createElement('div'), { className: 'empty', textContent: '暂无余额数据' }));
+    const maxBal = Math.max(1, ...qs.map((x) => parseFloat(String(x.balance || '').replace(/[^0-9.]/g, '')) || 0));
+    qs.forEach((x) => {
+      const bal = parseFloat(String(x.balance || '').replace(/[^0-9.]/g, '')) || 0;
+      const row = document.createElement('div'); row.className = 'row';
+      const nm = document.createElement('span'); nm.className = 'nm';
+      nm.textContent = (x.name || '') + (x.user ? ' · ' + x.user : '');
+      const bar = document.createElement('span'); bar.className = 'bar';
+      const i2 = document.createElement('i'); i2.style.width = Math.max(2, 100 * bal / maxBal) + '%';
+      bar.append(i2);
+      const b = document.createElement('b'); b.textContent = x.balance || '–';
+      row.append(nm, bar, b); q.append(row);
+    });
+
+    // recent requests
+    const r = $('recent'); r.textContent = '';
+    const rows = d.recent || [];
+    if (!rows.length) r.append(Object.assign(document.createElement('div'), { className: 'empty', textContent: '今日还没有请求' }));
+    rows.forEach((x) => {
+      const el = document.createElement('div'); el.className = 'rq';
+      const t0 = document.createElement('span'); t0.className = 't'; t0.textContent = x.t || '';
+      const chip = document.createElement('span'); chip.className = 'chip ' + cls(x.agent); chip.textContent = AGENTS[x.agent] || x.agent || '?';
+      const m = document.createElement('span'); m.className = 'm'; m.textContent = x.model || '';
+      const n = document.createElement('span'); n.className = 'n';
+      n.textContent = (x.ms ? (x.ms / 1000).toFixed(1) + 's' : '') + ' · ' + fmt(x.in) + '→' + fmt(x.out);
+      const st = document.createElement('span'); st.className = 'st' + (x.status >= 400 ? ' err' : '');
+      el.append(t0, chip, m, n, st); r.append(el);
+    });
+    $('qAt').textContent = '实时';
+  }
+
+  function ago() {
+    if (!last) return;
+    const s = Math.max(0, Math.round((Date.now() - (last.ts || Date.now())) / 1000));
+    $('rAt').textContent = s <= 2 ? '刚刚' : s + ' 秒前';
+  }
+
+  phonebox.on('push', (v) => {
+    const d = v && v.magpie && v.magpie.data;
+    render(d);
+    ago();
+  });
+  setInterval(ago, 1000);
+</script>
